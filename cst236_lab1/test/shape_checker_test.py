@@ -1,12 +1,17 @@
 """
 Test for source.shape_checker
+Last Modified         Editor            Summary
+??/??/????            Joshua Kimball    Init
+1/12/2016             Paul Ivanov       Added TestGetQuadrilateralType Class
 """
+
 from source.shape_checker import get_triangle_type
 from source.shape_checker import get_quadrilateral_type
 from unittest import TestCase
 
 class TestGetTriangleType(TestCase):
 
+    # int tests
     def test_get_triangle_equilateral_all_int(self):
         result = get_triangle_type(1, 1, 1)
         self.assertEqual(result, 'equilateral')
@@ -19,6 +24,7 @@ class TestGetTriangleType(TestCase):
         result = get_triangle_type(1, 1, 2)
         self.assertEqual(result, 'isosceles')
 
+    #float tests
     def test_get_triangle_equilateral_all_float(self):
         result = get_triangle_type(1.0, 1.0, 1.0)
         self.assertEqual(result, 'equilateral')
@@ -31,6 +37,7 @@ class TestGetTriangleType(TestCase):
         result = get_triangle_type(1.0, 1.0, 2.0)
         self.assertEqual(result, 'isosceles')
 
+    #char tests
     def test_get_triangle_equilateral_all_char(self):
         result = get_triangle_type('a', 'b', 'c')
         self.assertEqual(result, 'invalid')
@@ -137,6 +144,15 @@ class TestGetTriangleType(TestCase):
         self.assertEqual(result, 'invalid')
 
 
+"""
+Class Name: TestGetQuadrilateralType
+param: Testcase object
+Brief: Class that tests the get_quadrilateral_type and get_rectangle_type functions
+in shape_checker.py
+
+Last Modified       Author          Summary
+1/12/2016           Paul Ivanov     Init
+"""
 class TestGetQuadrilateralType(TestCase):
 
     # all int tests

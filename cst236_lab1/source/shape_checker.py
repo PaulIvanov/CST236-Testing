@@ -1,6 +1,9 @@
 """
 :mod:`source.source1` -- Example source code
 ============================================
+Last Modified       Author             Summary
+??/??/????          Joshua Kimball     Init
+1/12/2016           Paul Ivanov        Added Quadrilateral functions
 
 The following example code determines if a set of 3 sides of a triangle is equilateral, scalene or iscoceles
 """
@@ -50,7 +53,27 @@ def get_triangle_type(a=0, b=0, c=0):
         return "scalene"
 
 
+
 def get_rectangle_type(a=0, b=0, c=0, d=0):
+    """
+    Determine if the given parameters define a square or a circle
+
+    :param a: line a
+    :type a: float, int
+
+    :param b: line b
+    :type b: float, int
+
+    :param c: line c
+    :type c: float, int
+
+    :param d: line d
+    :type d: float, int
+
+    :return: "square", "rectangle" or "invalid"
+    :rtype: str
+    """
+
     if not (isinstance(a, (int, float)) and isinstance(b, (int, float)) and isinstance(c, (int, float)) and isinstance(
             d, (int, float))):
         return "invalid"
@@ -68,6 +91,37 @@ def get_rectangle_type(a=0, b=0, c=0, d=0):
 
 
 def get_quadrilateral_type(side1=0, side2=0, side3=0, side4=0, angle1=0, angle2=0, angle3=0, angle4=0):
+    """
+    Determine if the given parameters define a quadrilateral type shape
+
+    :param side1: line a
+    :type side1: float, int
+
+    :param side2: line b
+    :type side2: float, int
+
+    :param side3: line c
+    :type side3: float, int
+
+    :param side4: line d
+    :type side4: float, int
+
+    :param angle1: line angle_a
+    :type angle1: float, int
+
+    :param angle2: line angle_b
+    :type angle2: float, int
+
+    :param angle1: line angle_c
+    :type angle1: float, int
+
+    :param angle1: line angle_d
+    :type angle1: float, int
+
+    :return: "square", "rectangle", "rhombus", "invalid" or "disconnected"
+    :rtype: str
+    """
+
     if not (isinstance(side1, (int, float)) and isinstance(side2, (int, float)) and isinstance(side3, (int, float)) and
             isinstance(side4, (int, float))and isinstance(angle1, (int, float)) and isinstance(angle2, (int, float)) and
             isinstance(angle3, (int, float)) and isinstance(angle4, (int, float))):
