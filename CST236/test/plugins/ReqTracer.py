@@ -1,5 +1,4 @@
 
-
 class RequirementTrace(object):
     req_text = ""
     def __init__(self, text):
@@ -7,6 +6,7 @@ class RequirementTrace(object):
         self.func_name = []
 
 Requirements = {}
+
 
 def requirements(req_list):
     def wrapper(func):
@@ -21,7 +21,8 @@ def requirements(req_list):
 
     return wrapper
 
-with open('Requirements.txt') as f:
+
+with open('lab_requirements.txt') as f:
     for line in f.readlines():
         if '#00' in line:
             req_id, desc = line.split(' ', 1)
