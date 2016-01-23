@@ -509,14 +509,8 @@ class TestQuestionAnswer(TestCase):
         result = new_interface.ask(test_string1)
         self.assertEqual(result, "invalid")
 
-    @requirements(['#0006', '#0007', '#0008', '#0010', '#0011', '#0013', '#0014', '#0015', '#0016', '#0019', '#0020'])
-    def test_question_update_triangle(self):
-        new_interface = Interface()
-        test_string1 = "What type of triangle is 2 2 2?"
-        result = new_interface.ask(test_string1)
-        result = new_interface.correct(get_quadrilateral_type)  # changin the triangle behavior to be hooked up to qua
-        result = new_interface.ask("What type of triangle is 2 2 2 2 90 90 90 90?")
-        self.assertEqual(result, "square")
+
+
 
 
 
