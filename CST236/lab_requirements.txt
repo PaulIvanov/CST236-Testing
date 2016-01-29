@@ -33,3 +33,15 @@
 * When I ask "Convert <number> <units> to <units>" I want to receive the converted value and units so I can know the answer.
 
 * When I ask for a numeric conversion I want at least 10 different units I can convert from/to
+
+* When I ask "Hello?", I want the application to say "Hi, I am <user name>'s guide."
+
+* When I ask "What is the answer to life the universe and everything?" I want the application to answer with the number 42
+
+* When I ask "What is n + n?", I want the application to add the two number and return the sum so I know how to add them.
+
+* When I ask "What is n - n?", I want the application to subtract the two numbers and return the difference.
+
+* When I ask "How are you?", I want the application to tell me how it feels so I know how it feels.
+
+* When I ask "What is your name?", I want the application to tell me its name so I know it.
