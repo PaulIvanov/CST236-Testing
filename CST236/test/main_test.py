@@ -19,6 +19,11 @@ class TestQuestionAnswer(test.shape_checker_test.TestCase):
 
     #check for keywords to work
     @requirements(['#0006', '#0008', '#0010', '#0011'])
+    def test_question_not_string(self):
+        new_interface = Interface()
+        self.assertRaisesRegexp(Exception, 'Not A String', new_interface.ask, 5)
+
+    @requirements(['#0006', '#0008', '#0010', '#0011'])
     def test_question_ask_bad_keyword(self):
         new_interface = Interface()
         result = new_interface.ask("Is paul awesome?")
@@ -104,6 +109,25 @@ class TestQuestionAnswer(test.shape_checker_test.TestCase):
         test_string = test_string.strip('?')
         result = new_interface.ask(test_string)
         self.assertEqual(result, NOT_A_QUESTION_RETURN)
+
+    @requirements(['#0015', '#0019', '#0020'])
+    def test_question_ask_correct_valid(self):
+        new_interface = Interface()
+        test_string = "How is paul awesome?"
+        result = new_interface.ask(test_string)
+        new_interface.teach("He just is.")
+
+        new_interface.correct("He is not awesome")
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, "He is not awesome")
+
+    @requirements(['#0015', '#0019', '#0020'])
+    def test_question_ask_correct_invalid(self):
+        new_interface = Interface()
+        test_string = "How is paul awesome?"
+        result = new_interface.correct("He is not awesome")
+        self.assertEqual(result, NO_QUESTION)
+
 
     @requirements(['#0006','#0007', '#0008', '#0010', '#0011', '#0013', '#0014', '#0015', '#0016'])
     def test_question_ask_90_similar(self):
@@ -424,7 +448,7 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         new_interface = Interface()
         test_string1 = "Convert P gallon to quart."
         result = new_interface.ask(test_string1)
-        self.assertEqual(result, "invalid input")
+        self.assertEqual(result, 'invalid input')
 
     @jobStory("When I ask \"Convert <number> <units> to <units>\" I want to receive the converted value and units so I can know the answer.")
     def test_conversion_invalid_conversion1(self):
@@ -472,6 +496,13 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
     def test_conversion_invalid_conversion7(self):
         new_interface = Interface()
         test_string1 = "Convert 10 km to lbs."
+        result = new_interface.ask(test_string1)
+        self.assertEqual(result, "invalid conversion")
+
+    @jobStory("When I ask for a numeric conversion I want at least 10 different units I can convert from/to")
+    def test_conversion_invalid_conversion8(self):
+        new_interface = Interface()
+        test_string1 = "Convert 10 gallon to lbs."
         result = new_interface.ask(test_string1)
         self.assertEqual(result, "invalid conversion")
 
@@ -538,11 +569,24 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         self.assertEqual(result, 'invalid')
 
     @jobStory("When I ask \"What is n + n?\", I want the application to add the two number and return the sum so I know how to add them.")
-    def test_adder_no_param(self):
+    def test_adder_one_number2(self):
         new_interface = Interface()
-        test_string = "What is n + n?"
+        test_string = "What is 2.5 + n?"
         result = new_interface.ask(test_string)
         self.assertEqual(result, 'invalid')
+
+    @jobStory("When I ask \"What is n + n?\", I want the application to add the two number and return the sum so I know how to add them.")
+    def test_adder_no_param(self):
+        new_interface = Interface()
+        test_string = "What is + ?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+    @jobStory("When I ask \"What is n + n?\", I want the application to add the two number and return the sum so I know how to add them.")
+    def test_adder_too_many_param(self):
+        new_interface = Interface()
+        test_string = "What is 5 + 5 + 5 +5?"
+        self.assertRaisesRegexp(Exception, "Too many extra parameters", new_interface.ask, test_string)
 
     @jobStory("When I ask \"What is n + n?\", I want the application to add the two number and return the sum so I know how to add them.")
     def test_adder_negative_int(self):
@@ -583,7 +627,7 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
     @jobStory("When I ask \"What is n - n?\", I want the application to subtract the two numbers and return the difference.")
     def test_subtractor_invalid(self):
         new_interface = Interface()
-        test_string = "What is n - n?"
+        test_string = "What is - ?"
         result = new_interface.ask(test_string)
         self.assertEqual(result, 'invalid')
 
@@ -593,6 +637,108 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         test_string = "What is n - 4?"
         result = new_interface.ask(test_string)
         self.assertEqual(result, 'invalid')
+
+    @jobStory("When I ask \"What is n divided by n?\", I want the application to divide the two numbers and return the dividend.")
+    def test_divide_int(self):
+        new_interface = Interface()
+        test_string = "What is 4 divided by 4?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 1)
+
+    @jobStory("When I ask \"What is n divided by n?\", I want the application to divide the two numbers and return the dividend.")
+    def test_divide_float(self):
+        new_interface = Interface()
+        test_string = "What is 4.0 divided by 1?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 4)
+
+    @jobStory("When I ask \"What is n divided by n?\", I want the application to divide the two numbers and return the dividend.")
+    def test_divide_char(self):
+        new_interface = Interface()
+        test_string = "What is n divided by 4?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+    @jobStory("When I ask \"What is n divided by n?\", I want the application to divide the two numbers and return the dividend.")
+    def test_divide_zero_numerator(self):
+        new_interface = Interface()
+        test_string = "What is 0 divided by 3?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 0)
+
+    @jobStory("When I ask \"What is n divided by n?\", I want the application to divide the two numbers and return the dividend.")
+    def test_divide_no_numerator(self):
+        new_interface = Interface()
+        test_string = "What is n divided by n?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+    @jobStory("When I ask \"What is n divided by n?\", I want the application to divide the two numbers and return the dividend.")
+    def test_divide_zero_denominator(self):
+        new_interface = Interface()
+        test_string = "What is 4 divided by 0?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, "Can't divide by zero")
+
+    @jobStory("When I ask \"What is n multiplied by n?\", I want the application to multiply the two numbers and return the product.")
+    def test_multiply_zero_multiply(self):
+        new_interface = Interface()
+        test_string = "What is 4 multiplied by 0?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 0)
+
+    @jobStory("When I ask \"What is n multiplied by n?\", I want the application to multiply the two numbers and return the product.")
+    def test_multiply_one(self):
+        new_interface = Interface()
+        test_string = "What is 4 multiplied by 1?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 4)
+
+    @jobStory("When I ask \"What is n multiplied by n?\", I want the application to multiply the two numbers and return the product.")
+    def test_multiply_char(self):
+        new_interface = Interface()
+        test_string = "What is n multiplied by p?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+    @jobStory("When I ask \"What is n multiplied by n?\", I want the application to multiply the two numbers and return the product.")
+    def test_multiply_one_inp(self):
+        new_interface = Interface()
+        test_string = "What is 4 multiplied by p?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+
+    @jobStory("When I ask \"What is n mod n?\", I want the application to modulus the two numbers and return the remainder.")
+    def test_mod_one_correct(self):
+        new_interface = Interface()
+        test_string = "What is 4 mod 1?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 0)
+
+    @jobStory("When I ask \"What is n mod n?\", I want the application to modulus the two numbers and return the remainder.")
+    def test_mod_no_inp(self):
+        new_interface = Interface()
+        test_string = "What is mod ?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+
+    @jobStory("When I ask \"What is n mod n?\", I want the application to modulus the two numbers and return the remainder.")
+    def test_mod_one_inp2(self):
+        new_interface = Interface()
+        test_string = "What is 1 mod n?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 'invalid')
+
+
+    @jobStory("When I ask \"What is n mod n?\", I want the application to modulus the two numbers and return the remainder.")
+    def test_mod_one_inp(self):
+        new_interface = Interface()
+        test_string = "What is 4 mod 1?"
+        result = new_interface.ask(test_string)
+        self.assertEqual(result, 0)
+
 
     # test emotion
     @jobStory("When I ask \"How are you?\", I want the application to tell me how it feels so I know how it feels.")
@@ -624,6 +770,13 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         result = new_interface.ask(test_string)
         self.assertEqual(result, NOT_A_QUESTION_RETURN)
 
+    @jobStory("When I ask \"What are all the questions you know?\", I want the application to give me a list of all the questions with known answers.")
+    def test_questionlist(self):
+        new_interface = Interface()
+        test_string = "What are all the questions you know?"
+        result = new_interface.ask(test_string)
+        exp_result = new_interface.get_questions()
+        self.assertEqual(result, exp_result)
 
 
     # TODO: Add more testcases for datetime--- Add 5 stories and add the stories to tests

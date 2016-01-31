@@ -9,6 +9,7 @@ class MyPlugin(Plugin):
             for key, item in sorted(Requirements.items()):
                 # reformat this text file
                 w.write(key + ':' + str(item.func_name) + '\n')
+                w.write('\n')
 
             for item in Stories:
                 w.write(item.js_text + ': ' + str(item.func_name) + '\n')

@@ -23,9 +23,6 @@ def get_fibonacci(n='c'):
     if n == 'c':
         return "no parameter given in get_fibonacci"
 
-    if not isinstance(n, (int, float)):
-        return 'invalid'
-
     if n < 0:
         return 'invalid'
 
@@ -37,9 +34,6 @@ def get_fibonacci(n='c'):
 
 def get_pi_digit(n=0):
     if n <= 0:
-        return 'invalid'
-
-    if not isinstance(n, (int, float)):
         return 'invalid'
 
     n = floor(n-1)
@@ -115,6 +109,38 @@ def subtractor(num1='a', num2='a'):
 
     return num1 - num2
 
+def divider(num1='a', num2='a'):
+    if not isinstance(num1, (int, float)):
+        return 'invalid'
+
+    if not isinstance(num2, (int, float)):
+        return 'invalid'
+
+    if num2 == 0:
+        return "Can't divide by zero"
+
+    return num1/num2
+
+
+def multiplier(num1='a', num2='a'):
+    if not isinstance(num1, (int, float)):
+        return 'invalid'
+
+    if not isinstance(num2, (int, float)):
+        return 'invalid'
+
+    return num1 * num2
+
+
+def get_mod(quotient='a', divisor='a'):
+    if not isinstance(quotient, (int, float)):
+        return 'invalid'
+
+    if not isinstance(divisor, (int, float)):
+        return 'invalid'
+
+    return quotient % divisor
+
 
 def get_emotion():
     return "Unstable"
@@ -122,6 +148,8 @@ def get_emotion():
 
 def get_name():
     return "Juan"
+
+
 
 
 

@@ -6,7 +6,7 @@ Last Modified         Editor            Summary
 """
 
 from source.shape_checker import get_triangle_type
-from source.shape_checker import get_quadrilateral_type
+from source.shape_checker import get_quadrilateral_type, get_rectangle_type
 from source.main import Interface, NOT_A_QUESTION_RETURN, UNKNOWN_QUESTION, NO_QUESTION, NO_TEACH
 from unittest import TestCase
 from test.plugins.ReqTracer import requirements
@@ -97,6 +97,7 @@ class TestGetTriangleType(TestCase):
         result = get_triangle_type(tup1)
         self.assertEqual(result, 'isosceles')
 
+    @requirements(['#0001'])
     def test_get_triangle_invalid_tuple(self):
         tup1 = (1, 1, 1, 1)
         result = get_triangle_type(tup1)
@@ -305,3 +306,23 @@ class TestGetQuadrilateralType(TestCase):
     def test_get_quad_all_zeroes_int(self):
         result = get_quadrilateral_type(0, 0, 0, 0, 0, 0, 0, 0)
         self.assertEqual(result, 'invalid')
+
+    @requirements(['#0003', '#0004', '#0005'])
+    def test_get_rect_invalid_param1(self):
+        result = get_rectangle_type(5, 'a', 5, 6)
+        self.assertEqual(result, 'invalid')
+
+    @requirements(['#0003', '#0004', '#0005'])
+    def test_get_rect_invalid_param2(self):
+        result = get_rectangle_type(5, 0, 5, 6)
+        self.assertEqual(result, 'invalid')
+
+    @requirements(['#0003', '#0004', '#0005'])
+    def test_get_quad_all_zeroes_int(self):
+        result = get_quadrilateral_type(0, 0, 0, 0, 0, 0, 0, 0)
+        self.assertEqual(result, 'invalid')
+
+
+
+
+

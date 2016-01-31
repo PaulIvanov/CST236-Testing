@@ -1,7 +1,7 @@
 from source.question_answer import QA
 from source.shape_checker import get_triangle_type, get_quadrilateral_type
 from source.answers import get_datetime, get_fibonacci, get_pi_digit, open_door, convert_num, answer_to_universe
-from source.answers import hello, adder, subtractor, get_emotion, get_name
+from source.answers import hello, adder, subtractor, get_emotion, get_name, divider, multiplier, get_mod
 import difflib
 NOT_A_QUESTION_RETURN = "Was that a question?"
 UNKNOWN_QUESTION = "I don't know, please provide the answer"
@@ -29,10 +29,14 @@ class Interface(object):
             'What is the answer to life the universe and everything?': QA('What is the answer to life the universe and everything?',
                                                                           answer_to_universe, True),
             'Hello?': QA('Hello?', hello, True),
-            'What is n + n ': QA('What is n +', adder, True),
-            'What is n - n ': QA('What is n -', subtractor, True),
+            'What is n + n ': QA('What is +', adder, True),
+            'What is n - n ': QA('What is -', subtractor, True),
+            'What is n divided by n ': QA('What is n divided by n', divider, True),
+            'What is n multiplied by n ': QA('What is n multiplied by n', multiplier, True),
+            'What is n mod n ': QA('What is mod ', get_mod, True),
             'How are you?': QA('How are you?', get_emotion, True),
-            'What is your name?': QA('What is your name?', get_name, True)
+            'What is your name?': QA('What is your name?', get_name, True),
+            'What are all the questions you know?': QA('What are all the questions you know?', self.get_questions, True)
         }
         self.statement_answers = {
             'Please clear memory': QA('Please clear memory', 'Memory Cleared', True),
@@ -40,6 +44,7 @@ class Interface(object):
             'Convert <number> <units> to <units>': QA('convert <number> to ', convert_num, True)
         }
         self.last_question = None
+
 
     def ask(self, question=""):
         if not isinstance(question, str):
@@ -122,7 +127,6 @@ class Interface(object):
         else:
             return UNKNOWN_QUESTION
 
-
     def __clr_mem(self):
 
         temp = {}
@@ -139,5 +143,13 @@ class Interface(object):
 
         return CLEARED_MEMORY
 
+    def get_questions(self):
+        question_list = []
+        for key in self.question_answers:
+            question_list.append(key)
 
+        for key in self.statement_answers:
+            question_list.append(key)
+
+        return question_list
 
