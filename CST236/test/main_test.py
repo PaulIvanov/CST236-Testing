@@ -6,6 +6,7 @@ import test.shape_checker_test
 from getpass import getuser
 from source.shape_checker import get_quadrilateral_type
 
+
 """
 Class Name: TestQuestionAnswer
 param: Testcase object

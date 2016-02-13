@@ -3,6 +3,9 @@ from source.shape_checker import get_triangle_type, get_quadrilateral_type
 from source.answers import get_datetime, get_fibonacci, get_pi_digit, open_door, convert_num, answer_to_universe
 from source.answers import hello, adder, subtractor, get_emotion, get_name, divider, multiplier, get_mod
 import difflib
+import source.git_utils
+import re
+
 NOT_A_QUESTION_RETURN = "Was that a question?"
 UNKNOWN_QUESTION = "I don't know, please provide the answer"
 NO_QUESTION = 'Please ask a question first'
@@ -36,7 +39,9 @@ class Interface(object):
             'What is n mod n ': QA('What is mod ', get_mod, True),
             'How are you?': QA('How are you?', get_emotion, True),
             'What is your name?': QA('What is your name?', get_name, True),
-            'What are all the questions you know?': QA('What are all the questions you know?', self.get_questions, True)
+            'What are all the questions you know?': QA('What are all the questions you know?', self.get_questions, True),
+           # 'Is the <file path> in the repo?': QA('Is the <file path> in the repo?', source.git_utils.is_file_in_path , True),
+            'What is the status of ': QA('What is the status of ', source.git_utils.get_git_file_info, True),
         }
         self.statement_answers = {
             'Please clear memory': QA('Please clear memory', 'Memory Cleared', True),
@@ -109,7 +114,12 @@ class Interface(object):
         args = []
         for keyword in question[:-1].split(' '):
             try:
+                if self.is_valid_path(keyword):
+                    args.append(keyword)
+                    continue
+
                 args.append(float(keyword))
+
             except:
                 parsed_question += "{0} ".format(keyword)
         parsed_question = parsed_question[0:-1]
@@ -152,4 +162,11 @@ class Interface(object):
             question_list.append(key)
 
         return question_list
+
+    def is_valid_path(self, path='invalid'):
+        if re.match(r'[a-zA-Z]:\\', path):
+            return True
+
+        else:
+            return False
 

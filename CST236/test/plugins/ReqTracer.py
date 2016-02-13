@@ -33,7 +33,7 @@ def requirements(req_list):
 
 with open('lab_requirements.txt') as f:
     for line in f.readlines():
-        if '#00' in line:
+        if '#0' in line:
             req_id, desc = line.split(' ', 1)
             Requirements[req_id] = RequirementTrace(desc)
 
