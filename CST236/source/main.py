@@ -20,7 +20,7 @@ class Interface(object):
         self.where_dict = {}
         self.who_dict = {}
 
-        self.keywords = ['How', 'What', 'Where', 'Who', "Why", "Hello?"]
+        self.keywords = ['How', 'What', 'Where', 'Who', "Why", "Hello?", "Is"]
         self.question_mark = chr(0x3F)
 
         self.question_answers = {
@@ -40,8 +40,12 @@ class Interface(object):
             'How are you?': QA('How are you?', get_emotion, True),
             'What is your name?': QA('What is your name?', get_name, True),
             'What are all the questions you know?': QA('What are all the questions you know?', self.get_questions, True),
-           # 'Is the <file path> in the repo?': QA('Is the <file path> in the repo?', source.git_utils.is_file_in_path , True),
+
+            'Is the <file path> in the repo?': QA('Is the in the repo ', source.git_utils.is_file_in_repo, True),
             'What is the status of ': QA('What is the status of ', source.git_utils.get_git_file_info, True),
+            'What is the deal with ': QA('What is the deal with ', source.git_utils.get_file_info, True),
+            'What branch is ?': QA('What branch is ', source.git_utils.get_repo_branch, True),
+            'Where did <file path> come from?': QA('Where did come from', source.git_utils.get_repo_url, True)
         }
         self.statement_answers = {
             'Please clear memory': QA('Please clear memory', 'Memory Cleared', True),
@@ -116,6 +120,12 @@ class Interface(object):
             try:
                 if self.is_valid_path(keyword):
                     args.append(keyword)
+                    continue
+
+                if keyword.__contains__('\\') and not keyword.__contains__(':'):
+                    path = args.pop()
+                    args.append((path + ' ' + keyword))
+
                     continue
 
                 args.append(float(keyword))

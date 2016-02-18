@@ -5,6 +5,7 @@ import source.git_utils
 import subprocess
 from test.plugins.ReqTracer import jobStory
 import mock
+import os
 
 """
 #0100 The system shall return 'Yes' or 'No' when asked 'Is the <file path> in the repo?'
@@ -39,37 +40,47 @@ class TestGitUtils(TestCase):
         result = source.git_utils.get_git_file_info("C:\\Users\\paul ivanovs")
         self.assertEqual(result, 'paul ivanovs is a dirty repo')
 
+    @requirements(['#0100'])
+    @mock.patch('subprocess.Popen')
+    def test_is_file_in_repo_untracked(self, mock_subproc_popen):
+        process_mock = mock.Mock()
+        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), ('C:\\Users\\paul ivanovs\\PavelI\\CST236\\test', '4'), ('duh', '5'), ('poo','6')]}
+        process_mock.configure_mock(**attrs)
+        mock_subproc_popen.return_value = process_mock
+        result = source.git_utils.is_file_in_repo(os.path.relpath(__file__))
+        self.assertEqual(result, 'No')
+
     @requirements(['#0101'])
     @mock.patch('subprocess.Popen')
     def test_status_repo_untracked(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {'answers.pyc', 'error'}}
+        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), ('C:\\Users\\paul ivanovs\\PavelI\\CST236\\test', '4'), ('duh', '5'), ('poo','6')]}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.get_git_file_info("C:\\Users\\paul ivanovs\\PavelI\\CST236\\source\\answers.pyc")
-        self.assertEqual(result, 'is untracked')
+        result = source.git_utils.get_git_file_info(os.path.relpath(__file__))
+        self.assertEqual(result, 'git_utils_test.py has been not been checked in')
 
-    @requirements(['#0101'])
+    @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_abs_path_Yes(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {'', 'error'}}
+        attrs = {'communicate.return_value': {' ', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.is_file_in_repo("run_tests.py")
         self.assertEqual(result, 'Yes')
 
-    @requirements(['#0101'])
+    @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_abs_path_No(self, mock_subproc_popen):
         process_mock = mock.Mock()
         attrs = {'communicate.return_value': {'', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.is_file_in_repo("main_test.pyc")
+        result = source.git_utils.is_file_in_repo(os.path.relpath(__file__))
         self.assertEqual(result, 'Yes')
 
-    @requirements(['#0101'])
+    @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_no(self, mock_subproc_popen):
         file_path = 'C:\\Users\\paul ivanovs\\PavelI\\CST236\\'
@@ -126,7 +137,7 @@ class TestGitUtils(TestCase):
         self.assertEqual(result, False)
 
 
-    @requirements(['#0101'])
+    @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_yes(self, mock_subproc_popen):
         process_mock = mock.Mock()
@@ -137,7 +148,7 @@ class TestGitUtils(TestCase):
         self.assertEqual(result, 'Yes')
 
 
-    @requirements(['#0101'])
+    @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_no(self, mock_subproc_popen):
         process_mock = mock.Mock()
@@ -161,7 +172,7 @@ class TestGitUtils(TestCase):
 
 
     # get_repo_branch
-    @requirements(['#0101'])
+    @requirements(['#0103'])
     @mock.patch('subprocess.Popen')
     def test_get_repo_branch(self, mock_subproc_popen):
         process_mock = mock.Mock()
@@ -172,7 +183,7 @@ class TestGitUtils(TestCase):
         self.assertEqual(result, 'master')
 
     # get_repo_ur
-    @requirements(['#0101'])
+    @requirements(['#0104'])
     @mock.patch('subprocess.Popen')
     def test_get_repo_url(self, mock_subproc_popen):
         process_mock = mock.Mock()
@@ -195,7 +206,7 @@ class TestGitUtils(TestCase):
         self.assertEqual(result, True)
 
     # get_file_info
-    @requirements(['#0101'])
+    @requirements(['#0102'])
     @mock.patch('subprocess.Popen')
     def test_get_file_info_valid(self, mock_subproc_popen):
         process_mock = mock.Mock()
@@ -206,4 +217,74 @@ class TestGitUtils(TestCase):
         result = source.git_utils.get_file_info("C:\\Users\\paul ivanovs\\PavelI\\README.md")
         self.assertEqual(result, '#AO56QU, 1/2/2016, PaulIvanov')
 
+
+    # get_git_file_info
+    @requirements(['#0100'])
+    @mock.patch('subprocess.Popen')
+    def test_ask_is_file_in_repo(self, mock_subproc_popen):
+        test_question = 'Is the {} in the repo?'.format('C:\\Users\\paul_ivanovs\\PavelI\\README.md')
+        process_mock = mock.Mock()
+        my_interface = Interface()
+
+        attrs = {'communicate.return_value': {'', 'error'}}
+        process_mock.configure_mock(**attrs)
+        mock_subproc_popen.return_value = process_mock
+        result = my_interface.ask(test_question)
+        self.assertEqual(result, 'No')
+
+
+    # get_git_file_info
+    @requirements(['#0101'])
+    @mock.patch('subprocess.Popen')
+    def test_what_is_status_of_repo_up_to_date(self, mock_subproc_popen):
+        test_question = 'What is the status of {}?'.format(__file__)
+        process_mock = mock.Mock()
+        my_interface = Interface()
+
+        attrs = {'communicate.return_value': {'', 'error'}}
+        process_mock.configure_mock(**attrs)
+        mock_subproc_popen.return_value = process_mock
+        result = my_interface.ask(test_question)
+        self.assertEqual(result, 'git_utils_test.py is up to date')
+
+
+    # get_git_file_info
+    @requirements(['#0102'])
+    @mock.patch('subprocess.Popen')
+    def test_what_is_status_of_repo_hashes(self, mock_subproc_popen):
+        process_mock = mock.Mock()
+        attrs = {'communicate.return_value': {'#AO56QU, 1/2/2016, PaulIvanov', 'error'}}
+        process_mock.configure_mock(**attrs)
+        test_question = 'What is the deal with {}?'.format("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+        my_interface = Interface()
+        mock_subproc_popen.return_value = process_mock
+        result = my_interface.ask(test_question)
+        self.assertEqual(result, '#AO56QU, 1/2/2016, PaulIvanov')
+
+
+    # get_git_file_info
+    @requirements(['#0103'])
+    @mock.patch('subprocess.Popen')
+    def test_what_is_branch_name(self, mock_subproc_popen):
+        process_mock = mock.Mock()
+        attrs = {'communicate.return_value': {'master', 'error'}}
+        process_mock.configure_mock(**attrs)
+        test_question = 'What branch is {}?'.format("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+        my_interface = Interface()
+        mock_subproc_popen.return_value = process_mock
+        result = my_interface.ask(test_question)
+        self.assertEqual(result, 'master')
+
+    # get_git_file_info
+    @requirements(['#0104'])
+    @mock.patch('subprocess.Popen')
+    def test_what_is_repo_url(self, mock_subproc_popen):
+        process_mock = mock.Mock()
+        attrs = {'communicate.return_value': {'master', 'error'}}
+        process_mock.configure_mock(**attrs)
+        test_question = 'Where did {} come from?'.format("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+        my_interface = Interface()
+        mock_subproc_popen.return_value = process_mock
+        result = my_interface.ask(test_question)
+        self.assertEqual(result, 'master')
 

@@ -27,7 +27,7 @@ class TestQuestionAnswer(test.shape_checker_test.TestCase):
     @requirements(['#0006', '#0008', '#0010', '#0011'])
     def test_question_ask_bad_keyword(self):
         new_interface = Interface()
-        result = new_interface.ask("Is paul awesome?")
+        result = new_interface.ask("paul awesome?")
         self.assertEqual(result, NOT_A_QUESTION_RETURN)
 
     @requirements(['#0006', '#0008', '#0010', '#0011'])
