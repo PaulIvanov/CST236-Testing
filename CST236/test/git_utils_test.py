@@ -37,24 +37,25 @@ class TestGitUtils(TestCase):
         attrs = {'communicate.return_value': {'output', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.get_git_file_info("C:\\Users\\paul ivanovs")
-        self.assertEqual(result, 'paul ivanovs is a dirty repo')
+        result = source.git_utils.get_git_file_info(os.path.dirname(__file__))
+        self.assertEqual(result, 'test is a dirty repo')
 
     @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_untracked(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), ('C:\\Users\\paul ivanovs\\PavelI\\CST236\\test', '4'), ('duh', '5'), ('poo','6')]}
+        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), (__file__, '4'), ('duh', '5'), ('poo','6')]}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.is_file_in_repo(os.path.relpath(__file__))
+        result = source.git_utils.is_file_in_repo(os.path.relpath(__file__ + 'lol'))
         self.assertEqual(result, 'No')
 
     @requirements(['#0101'])
     @mock.patch('subprocess.Popen')
     def test_status_repo_untracked(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), ('C:\\Users\\paul ivanovs\\PavelI\\CST236\\test', '4'), ('duh', '5'), ('poo','6')]}
+        testpath = os.path.dirname(__file__)
+        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), (testpath, '4'), ('duh', '5'), ('poo','6')]}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.get_git_file_info(os.path.relpath(__file__))
@@ -83,7 +84,7 @@ class TestGitUtils(TestCase):
     @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_no(self, mock_subproc_popen):
-        file_path = 'C:\\Users\\paul ivanovs\\PavelI\\CST236\\'
+        file_path = (__file__ + 'lol')
         process_mock = mock.Mock()
         attrs = {'communicate.return_value': {file_path, 'error'}}
         process_mock.configure_mock(**attrs)
@@ -99,18 +100,20 @@ class TestGitUtils(TestCase):
         attrs = {'communicate.return_value': {'', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.get_git_file_info("C:\\Users\\paul ivanovs")
-        self.assertEqual(result, 'paul ivanovs is up to date')
+        result = source.git_utils.get_git_file_info(__file__)
+        self.assertEqual(result, 'git_utils_test.py is up to date')
 
     @requirements(['#0101'])
     @mock.patch('subprocess.Popen')
     def test_status_repo_modified_locally(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {'C:\\Users\\paul ivanovs\\PavelI\\coverage config.txt', 'error'}}
+        modified_path = os.path.dirname(__file__)
+        modified_path.join('main_test.py')
+        attrs = {'communicate.return_value': {modified_path, 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.get_git_file_info("C:\\Users\\paul ivanovs\\PavelI\\coverage config.txt")
-        self.assertEqual(result, 'coverage config.txt has been modified locally')
+        result = source.git_utils.get_git_file_info(modified_path)
+        self.assertEqual(result, 'test has been modified locally')
 
 
     @requirements(['#0101'])
@@ -133,7 +136,7 @@ class TestGitUtils(TestCase):
         attrs = {'communicate.return_value': {'', 'Error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.is_repo_dirty("C:\\Users\\paul ivanovs\\PavelI")
+        result = source.git_utils.is_repo_dirty(__file__)
         self.assertEqual(result, False)
 
 
@@ -141,10 +144,10 @@ class TestGitUtils(TestCase):
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_yes(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {'output', 'error'}}
+        attrs = {'communicate.return_value': {'', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.is_file_in_repo("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+        result = source.git_utils.is_file_in_repo(__file__)
         self.assertEqual(result, 'Yes')
 
 
@@ -152,10 +155,10 @@ class TestGitUtils(TestCase):
     @mock.patch('subprocess.Popen')
     def test_is_file_in_repo_no(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {'output', 'error'}}
+        attrs = {'communicate.return_value': {__file__, 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
-        result = source.git_utils.is_file_in_repo("C:\\Users\\paul ivanovs\\PavelI.txt")
+        result = source.git_utils.is_file_in_repo(__file__)
         self.assertEqual(result, 'No')
 
 
@@ -164,11 +167,12 @@ class TestGitUtils(TestCase):
     @mock.patch('subprocess.Popen')
     def test_get_repo_root(self, mock_subproc_popen):
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {'C:\\Users\\paul ivanovs\\PavelI', 'error'}}
+        modified_path = os.path.dirname(__file__)
+        attrs = {'communicate.return_value': {modified_path, 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.get_repo_root("C:\\Users\\paul ivanovs\\PavelI\\README.md")
-        self.assertEqual(result, 'C:\\Users\\paul ivanovs\\PavelI')
+        self.assertEqual(result, modified_path)
 
 
     # get_repo_branch
