@@ -19,6 +19,11 @@ class Interface(object):
         self.what_dict = {}
         self.where_dict = {}
         self.who_dict = {}
+        self.question_answer_buffer = ''
+        self.__log_file_name = "Question_Answer.log"
+
+        with open(self.__log_file_name, "w") as log_file:
+            log_file.write("QUESTIONS: \n")
 
         self.keywords = ['How', 'What', 'Where', 'Who', "Why", "Hello?", "Is"]
         self.question_mark = chr(0x3F)
@@ -62,6 +67,7 @@ class Interface(object):
         if question[-1] != self.question_mark or question.split(' ')[0] not in self.keywords:
             self.last_question = None
 
+
             if question.startswith("Convert"):
                 question = question.rstrip('.')
                 question = question.lstrip('Convert')
@@ -72,9 +78,9 @@ class Interface(object):
                     number = float(number)
 
                 except ValueError:
-                    return "invalid input"
+                    return self.__write_answer_to_log("invalid input", question)
 
-                return convert_num(number, unit1, unit2)
+                return self.__write_answer_to_log(convert_num(number, unit1, unit2), question)
 
 
             if question in self.statement_answers:
@@ -82,15 +88,15 @@ class Interface(object):
 
                 if answer == 'Memory Cleared':
                     #special case, the answer will be the signal to clr mem
-                    return self.__clr_mem()
+                    return self.__write_answer_to_log(self.__clr_mem(), question)
 
                 else:
-                    return answer
+                    return self.__write_answer_to_log(answer, question)
             else:
-                return NOT_A_QUESTION_RETURN
+                return self.__write_answer_to_log(NOT_A_QUESTION_RETURN, question)
 
         else:
-            return self.__parse_question(self.question_answers, question)
+            return self.__write_answer_to_log(self.__parse_question(self.question_answers, question), question)
 
 
     def teach(self, answer=""):
@@ -148,7 +154,6 @@ class Interface(object):
             return UNKNOWN_QUESTION
 
     def __clr_mem(self):
-
         temp = {}
         for key in self.question_answers:
             item = self.question_answers[key]
@@ -180,3 +185,8 @@ class Interface(object):
         else:
             return False
 
+
+    def __write_answer_to_log(self, answer, question):
+        with open(self.__log_file_name, "a") as log_file:
+            log_file.write(str(question)+": " + str(answer) + '\n')
+            return answer

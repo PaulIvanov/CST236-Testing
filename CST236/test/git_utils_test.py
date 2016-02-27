@@ -6,6 +6,7 @@ import subprocess
 from test.plugins.ReqTracer import jobStory
 import mock
 import os
+import time
 
 """
 #0100 The system shall return 'Yes' or 'No' when asked 'Is the <file path> in the repo?'
@@ -55,11 +56,11 @@ class TestGitUtils(TestCase):
     def test_status_repo_untracked(self, mock_subproc_popen):
         process_mock = mock.Mock()
         testpath = os.path.dirname(__file__)
-        attrs = {'communicate.side_effect': [('', 'empty'), ('','empty'), ('git_utils_test.py','onefile'), (testpath, '4'), ('duh', '5'), ('poo','6')]}
+        attrs = {'communicate.side_effect': [('', 'empty'), ('', 'empty'), ('git_utils_test.pyc','empty'), (testpath,'onefile'), (testpath, '4'), ('duh', '5'), ('poo','6'), ('', '7'), ('', '8')]}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.get_git_file_info(os.path.relpath(__file__))
-        self.assertEqual(result, 'git_utils_test.py has been not been checked in')
+        self.assertEqual(result, 'git_utils_test.pyc has been not been checked in')
 
     @requirements(['#0100'])
     @mock.patch('subprocess.Popen')
@@ -101,7 +102,7 @@ class TestGitUtils(TestCase):
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.get_git_file_info(__file__)
-        self.assertEqual(result, 'git_utils_test.py is up to date')
+        self.assertEqual(result, 'git_utils_test.pyc is up to date')
 
     @requirements(['#0101'])
     @mock.patch('subprocess.Popen')
@@ -249,7 +250,7 @@ class TestGitUtils(TestCase):
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = my_interface.ask(test_question)
-        self.assertEqual(result, 'git_utils_test.py is up to date')
+        self.assertEqual(result, 'git_utils_test.pyc is up to date')
 
 
     # get_git_file_info
@@ -292,3 +293,32 @@ class TestGitUtils(TestCase):
         result = my_interface.ask(test_question)
         self.assertEqual(result, 'master')
 
+
+    @requirements(['#0104', '#0050', '#0051', '#0052'])
+    @mock.patch('subprocess.Popen')
+    def test_what_is_repo_url(self, mock_subproc_popen):
+        process_mock = mock.Mock()
+        attrs = {'communicate.return_value': {'master', 'error'}}
+        process_mock.configure_mock(**attrs)
+        test_question = 'Where did {} come from?'.format("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+        my_interface = Interface()
+        mock_subproc_popen.return_value = process_mock
+        result = my_interface.ask(test_question)
+        self.assertEqual(result, 'master')
+
+    @requirements(['#0050', '#0051', '#0052'])
+    @mock.patch('source.git_utils.get_repo_root')
+    def test_what_is_repo_url_log(self, mock_subproc_popen):
+        process_mock = mock.Mock()
+        attrs = {'get_repo_root.return_value': 'C:\\Users\\paul ivanovs\\PavelI\\README.md'}
+        process_mock.configure_mock(**attrs)
+        test_question = 'Where did {} come from?'.format("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+        my_interface = Interface()
+        mock_subproc_popen.return_value = process_mock
+        time0 = time.clock()
+        result = my_interface.ask(test_question)
+        time1 = time.clock()
+
+        delta_time = time1 - time0
+
+        self.assertLessEqual(delta_time, 0.050)

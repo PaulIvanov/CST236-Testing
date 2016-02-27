@@ -5,7 +5,7 @@ from datetime import datetime
 import test.shape_checker_test
 from getpass import getuser
 from source.shape_checker import get_quadrilateral_type
-
+import time
 
 """
 Class Name: TestQuestionAnswer
@@ -28,6 +28,16 @@ class TestQuestionAnswer(test.shape_checker_test.TestCase):
     def test_question_ask_bad_keyword(self):
         new_interface = Interface()
         result = new_interface.ask("paul awesome?")
+        self.assertEqual(result, NOT_A_QUESTION_RETURN)
+
+    @requirements(['#0006', '#0008', '#0010', '#0011', '#0055'])
+    def test_question_ask_bad_keyword_performance(self):
+        new_interface = Interface()
+        start_time = time.clock()
+        result = new_interface.ask("paul awesome?")
+        end_time = time.clock()
+        delta_time = end_time - start_time
+        self.assertLessEqual(delta_time, 0.002)
         self.assertEqual(result, NOT_A_QUESTION_RETURN)
 
     @requirements(['#0006', '#0008', '#0010', '#0011'])
@@ -393,6 +403,21 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         new_interface = Interface()
         test_string1 = "Convert 100 mm to km."
         result = new_interface.ask(test_string1)
+        expected_result = 0.0001
+        self.assertEqual(result, expected_result)
+
+    @jobStory("When I ask \"Convert <number> <units> to <units>\" I want to receive the converted value and units so I can know the answer.")
+    @requirements(['#0053'])
+    def test_conversion_mm_km_performance(self):
+        new_interface = Interface()
+        test_string1 = "Convert 100 mm to km."
+        start_time = time.clock()
+        result = new_interface.ask(test_string1)
+        end_time = time.clock()
+
+        delta_time = end_time - start_time
+        self.assertLessEqual(delta_time, .02)
+
         expected_result = 0.0001
         self.assertEqual(result, expected_result)
 
@@ -779,5 +804,15 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         exp_result = new_interface.get_questions()
         self.assertEqual(result, exp_result)
 
-
-    # TODO: Add more testcases for datetime--- Add 5 stories and add the stories to tests
+    @jobStory("When I ask \"What are all the questions you know?\", I want the application to give me a list of all the questions with known answers.")
+    @requirements(['#0054'])
+    def test_questionlist_performance(self):
+        new_interface = Interface()
+        test_string = "What are all the questions you know?"
+        start_time = time.clock()
+        result = new_interface.ask(test_string)
+        end_time = time.clock()
+        delta_time = end_time = start_time
+        self.assertLessEqual(delta_time, 0.80)
+        exp_result = new_interface.get_questions()
+        self.assertEqual(result, exp_result)

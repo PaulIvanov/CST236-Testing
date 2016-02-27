@@ -10,6 +10,7 @@ from source.shape_checker import get_quadrilateral_type, get_rectangle_type
 from source.main import Interface, NOT_A_QUESTION_RETURN, UNKNOWN_QUESTION, NO_QUESTION, NO_TEACH
 from unittest import TestCase
 from test.plugins.ReqTracer import requirements
+import time
 
 
 class TestGetTriangleType(TestCase):
@@ -18,6 +19,15 @@ class TestGetTriangleType(TestCase):
     @requirements(['#0001', '#0002'])
     def test_get_triangle_equilateral_all_int(self):
         result = get_triangle_type(1, 1, 1)
+        self.assertEqual(result, 'equilateral')
+
+    @requirements(['#0001', '#0002', '#0056'])
+    def test_get_triangle_equilateral_all_int_performance(self):
+        start_time = time.clock()
+        result = get_triangle_type(1, 1, 1)
+        end_time = time.clock()
+        delta_time = end_time - start_time
+        self.assertLessEqual(delta_time, 0.00001)
         self.assertEqual(result, 'equilateral')
 
     @requirements(['#0001', '#0002'])
@@ -221,6 +231,15 @@ class TestGetQuadrilateralType(TestCase):
     @requirements(['#0003', '#0004', '#0005'])
     def test_get_quad_rectangle_all_float(self):
         result = get_quadrilateral_type(1.5, 2.0, 2.0, 1.5, 90.0, 90.0, 90.0, 90.0)
+        self.assertEqual(result, 'rectangle')
+
+    @requirements(['#0003', '#0004', '#0005', '#0057'])
+    def test_get_quad_rectangle_all_float_performance(self):
+        start_time = time.clock()
+        result = get_quadrilateral_type(1.5, 2.0, 2.0, 1.5, 90.0, 90.0, 90.0, 90.0)
+        end_time = time.clock()
+        delta_time = end_time - start_time
+        self.assertLessEqual(delta_time, 0.000025)
         self.assertEqual(result, 'rectangle')
 
     @requirements(['#0003', '#0004', '#0005'])
