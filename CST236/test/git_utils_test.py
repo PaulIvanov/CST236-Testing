@@ -62,8 +62,6 @@ class TestGitUtils(TestCase):
         attrs = {'communicate.side_effect': [('', 'empty'), ('', 'empty'),
                                              ('{}'.format(os.path.basename(__file__)), 'empty'),
                                              (testpath, 'onefile'),
-                                             (testpath, '4'), ('duh', '5'), ('poo', '6'),
-                                             ('', '7'), ('', '8')]}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.get_git_file_info((os.path.basename(__file__)))

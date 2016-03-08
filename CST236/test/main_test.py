@@ -908,6 +908,8 @@ class TestInterfaceAddedQs(test.shape_checker_test.TestCase):
         result = new_interface.ask(test_string)
         end_time = time.clock()
         delta_time = end_time - start_time
+
         self.assertLessEqual(delta_time, 1.90)
+
         exp_result = new_interface.get_questions()
         self.assertEqual(result, exp_result)
