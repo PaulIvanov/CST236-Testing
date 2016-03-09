@@ -61,7 +61,7 @@ class TestGitUtils(TestCase):
         testpath = os.path.dirname(os.path.abspath(os.path.basename(__file__)))
         attrs = {'communicate.side_effect': [('', 'empty'), ('', 'empty'),
                                              ('{}'.format(os.path.basename(__file__)), 'empty'),
-                                             (testpath, 'onefile'),
+                                             (testpath, 'onefile')]}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.get_git_file_info((os.path.basename(__file__)))
@@ -69,10 +69,16 @@ class TestGitUtils(TestCase):
             os.path.basename(__file__)))
 
     @requirements(['#0100'])
+    @mock.patch('os.path.exists')
     @mock.patch('subprocess.Popen')
-    def test_is_file_in_repo_abs_path_Yes(self, mock_subproc_popen):
+    def test_is_file_in_repo_abs_path_Yes(self, mock_subproc_popen, mock_os_path):
+        file_path_mock = mock.Mock()
+        attrs = {'os.path.exists.return_value': True}
+        file_path_mock.configure_mock(**attrs)
+        mock_os_path.return_value = file_path_mock
+    
         process_mock = mock.Mock()
-        attrs = {'communicate.return_value': {' ', 'error'}}
+        attrs = {'communicate.return_value': {'', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = source.git_utils.is_file_in_repo("run_tests.py")
