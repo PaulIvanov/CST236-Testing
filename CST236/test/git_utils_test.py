@@ -367,15 +367,15 @@ class TestGitUtils(TestCase):
         mock_os_path.return_value = file_path_mock
 
         process_mock = mock.Mock()
-        attrs = {'get_repo_root.return_value': 'C:\\Users\\paul ivanovs\\PavelI\\README.md'}
+        attrs = {'get_repo_root.return_value': '{}'.format(os.path.abspath(__file__))}
         process_mock.configure_mock(**attrs)
         test_question = 'Where did {} come from?'.\
-            format('C:\\Users\\paul ivanovs\\PavelI\\README.md')
+            format('{}'.format(os.path.abspath(__file__)))
         my_interface = Interface()
         mock_subproc_popen.return_value = process_mock
         time0 = time.clock()
         result = my_interface.ask(test_question)
         time1 = time.clock()
-        self.assertEqual(result, 'https://github.com/OregonTech/PavelI')
+        self.assertEqual(result, 'https://github.com/PaulIvanov/CST236-Testing.git')
         delta_time = time1 - time0
         self.assertLessEqual(delta_time, 0.050)
