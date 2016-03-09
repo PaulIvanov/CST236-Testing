@@ -271,7 +271,8 @@ class Interface(object):
         :returns: true if the path is valid, false if not
         :rtype: bool
         """
-        return re.match(r'[a-zA-Z]:\\', path)
+        if re.match(r'[a-zA-Z]:\\', path) or re.match(r'/', path):
+            return True
 
 
     def __write_answer_to_log(self, answer, question):

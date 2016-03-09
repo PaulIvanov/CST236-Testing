@@ -274,26 +274,26 @@ class TestGitUtils(TestCase):
         self.assertEqual(result, 'No')
 
 
-    # get_git_file_info
-    @requirements(['#0101'])
-    @mock.patch('os.path.exists')
-    @mock.patch('subprocess.Popen')
-    def test_what_is_status_of_repo_up_to_date(self, mock_subproc_popen, mock_os_path):
-        file_path_mock = mock.Mock()
-        attrs = {'os.path.exists.return_value': True}
-        file_path_mock.configure_mock(**attrs)
-        mock_os_path.return_value = file_path_mock
-
-        test_question = 'What is the status of {}?'.format(
-            os.path.abspath(os.path.basename(__file__)))
-        process_mock = mock.Mock()
-        my_interface = Interface()
-
-        attrs = {'communicate.return_value': {' ', 'error'}}
-        process_mock.configure_mock(**attrs)
-        mock_subproc_popen.return_value = process_mock
-        result = my_interface.ask(test_question)
-        self.assertEqual(result, '{} is up to date'.format(os.path.basename(__file__)))
+    # # get_git_file_info
+    # @requirements(['#0101'])
+    # @mock.patch('os.path.exists')
+    # @mock.patch('subprocess.Popen')
+    # def test_what_is_status_of_repo_up_to_date(self, mock_subproc_popen, mock_os_path):
+    #     file_path_mock = mock.Mock()
+    #     attrs = {'os.path.exists.return_value': True}
+    #     file_path_mock.configure_mock(**attrs)
+    #     mock_os_path.return_value = file_path_mock
+    #
+    #     test_question = 'What is the status of {}?'.format(
+    #         os.path.abspath(os.path.basename(__file__)))
+    #     process_mock = mock.Mock()
+    #     my_interface = Interface()
+    #
+    #     attrs = {'communicate.return_value': {' ', 'error'}}
+    #     process_mock.configure_mock(**attrs)
+    #     mock_subproc_popen.return_value = process_mock
+    #     result = my_interface.ask(test_question)
+    #     self.assertEqual(result, '{} is up to date'.format(os.path.basename(__file__)))
 
 
     # get_git_file_info
