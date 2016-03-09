@@ -76,7 +76,7 @@ class TestGitUtils(TestCase):
         attrs = {'os.path.exists.return_value': True}
         file_path_mock.configure_mock(**attrs)
         mock_os_path.return_value = file_path_mock
-    
+
         process_mock = mock.Mock()
         attrs = {'communicate.return_value': {'', 'error'}}
         process_mock.configure_mock(**attrs)
@@ -289,7 +289,7 @@ class TestGitUtils(TestCase):
         process_mock = mock.Mock()
         my_interface = Interface()
 
-        attrs = {'communicate.return_value': {'', 'error'}}
+        attrs = {'communicate.return_value': {' ', 'error'}}
         process_mock.configure_mock(**attrs)
         mock_subproc_popen.return_value = process_mock
         result = my_interface.ask(test_question)
@@ -370,7 +370,7 @@ class TestGitUtils(TestCase):
         attrs = {'get_repo_root.return_value': 'C:\\Users\\paul ivanovs\\PavelI\\README.md'}
         process_mock.configure_mock(**attrs)
         test_question = 'Where did {} come from?'.\
-            format("C:\\Users\\paul ivanovs\\PavelI\\README.md")
+            format('C:\\Users\\paul ivanovs\\PavelI\\README.md')
         my_interface = Interface()
         mock_subproc_popen.return_value = process_mock
         time0 = time.clock()
